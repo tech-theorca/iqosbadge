@@ -1,0 +1,163 @@
+
+/* Basic reset and layout */
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f5;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal styles */
+#nameModal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+/* Modal container - bigger width and padding */
+#nameModalContent {
+    background: white;
+    padding: 40px 60px;       /* increased padding for more space */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 400px;             /* increased width from 320px */
+    max-width: 90vw;          /* responsive on small screens */
+  }
+/* Modal heading - larger font size */
+#nameModalContent h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #333;
+    font-size: 1.5rem;        /* increased from default */
+  }
+/* Input field - bigger padding and font size */
+#nameInput {
+    width: 100%;
+    padding: 15px 20px;       /* increased padding */
+    font-size: 1.2rem;        /* larger text */
+    border: 1.5px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 25px;
+    transition: border-color 0.3s;
+  }
+/* Input focus style remains the same */
+#nameInput:focus {
+    border-color: #0078d7;
+    outline: none;
+  }
+/* Submit button - bigger padding and font size */
+#nameSubmitBtn {
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    padding: 15px 30px;       /* increased padding */
+    font-size: 1.3rem;        /* larger text */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+/* Button hover effect remains the same */
+#nameSubmitBtn:hover {
+    background-color: #005fa3;
+  }
+
+/* Game container - hidden initially */
+#gameContainer {
+  display: none;
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+#gameContainer h2 {
+  margin-bottom: 30px;
+  color: #222;
+}
+
+/* Badge container */
+#badges {
+  display: flex;
+  justify-content: space-around;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+/* Badge style: triangle shape with caption */
+.badge {
+  cursor: pointer;
+  user-select: none;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Triangle shape using CSS borders */
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 60px solid transparent;
+  border-right: 60px solid transparent;
+  border-bottom: 104px solid #b0a080; /* default color, will override */
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: border-bottom-color 0.3s;
+}
+
+/* Different colors for each badge */
+.badge[data-badge-name="Terea Bronze"] .triangle {
+  border-bottom-color: #cd7f32; /* bronze */
+}
+.badge[data-badge-name="Terea Sienna"] .triangle {
+  border-bottom-color: #882d17; /* sienna */
+}
+.badge[data-badge-name="Terea Apricity"] .triangle {
+  border-bottom-color: #f4a261; /* apricity (warm orange) */
+}
+
+/* Caption below each badge */
+.caption {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #444;
+  font-size: 1rem;
+  user-select: none;
+}
+
+/* Selected badge style */
+.badge.selected .triangle {
+  box-shadow: 0 0 15px 5px #0078d7;
+  transform: scale(1.1);
+  border-bottom-color: #005fa3 !important;
+}
+
+/* Send button with padding above */
+#sendBtn {
+  margin-top: 30px;
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+#sendBtn:hover {
+  background-color: #005fa3;
+}

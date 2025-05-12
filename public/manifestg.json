@@ -1,0 +1,22 @@
+{
+    "name": "Terea Badge Game",
+    "short_name": "TereaGame",
+    "start_url": "/game.html",
+    "display": "standalone",
+    "background_color": "#f0f0f5",
+    "theme_color": "#008080",
+    "description": "A fun badge selection game",
+    "icons": [
+      {
+        "src": "/iqos-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/iqos-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  

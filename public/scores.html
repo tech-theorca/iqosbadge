@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="/manifests.json" />
+  <meta name="theme-color" content="#008080" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Terea Badge Scoreboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Floating arrow */
+    #arrow {
+      font-size: 6rem;
+      color: #007bff;
+      animation: floatUpDown 2.5s ease-in-out infinite;
+      margin-bottom: 40px;
+      user-select: none;
+    }
+
+    #arrow img#arrowLogo {
+      width: 200px;      /* adjust size as needed */
+      height: auto;
+      display: block;
+      margin: 0 auto;   /* center the image horizontally */
+      cursor: pointer;  /* if you want it clickable */
+    }
+
+    @keyframes floatUpDown {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    /* Message container */
+    #message {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #28a745;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      max-width: 90vw;
+      text-align: center;
+      padding: 0 20px;
+      user-select: text;
+    }
+
+    /* Show message */
+    #message.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="arrow" aria-hidden="true">
+    <img src="/iqos logo 1.png" alt="IQOS Logo" id="arrowLogo" />
+  </div>
+  
+  <div id="message" role="alert" aria-live="polite"></div>
+
+  <script>
+    (function() {
+      const messageDiv = document.getElementById('message');
+      const arrow = document.getElementById('arrow');
+      let lastScoreId = null;
+
+      // Fetch latest score from backend
+      async function fetchLatestScore() {
+        try {
+          const response = await fetch('/api/scores');
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          if (data.success && data.scores.length > 0) {
+            const latest = data.scores[0];
+            // Use timestamp + player + score as unique key
+            const currentId = latest.timestamp + latest.player + latest.score;
+            if (currentId !== lastScoreId) {
+              lastScoreId = currentId;
+              showMessage(latest.player, latest.score);
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching scores:', err);
+        }
+      }
+
+      // Show animated message and toggle arrow visibility
+      function showMessage(player, badge) {
+        messageDiv.textContent = `Awesome Choice ${player}, You Like ${badge}.`;
+        messageDiv.classList.add('show');
+        arrow.style.display = 'none';  // Hide the floating icon when message shows
+
+        // Hide message after 5 seconds
+        setTimeout(() => {
+          messageDiv.classList.remove('show');
+          arrow.style.display = 'block';  // Show the floating icon again
+        }, 5000);
+      }
+
+      // Initial fetch
+      fetchLatestScore();
+
+      // Poll every 0.5 seconds (500 ms)
+      setInterval(fetchLatestScore, 500);
+    })();
+  </script>
+</body>
+</html>

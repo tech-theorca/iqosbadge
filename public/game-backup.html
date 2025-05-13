@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="manifest" href="/manifestg.json" />
+  <meta name="theme-color" content="#008080" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Terea Badge Selection Game</title>  
+</head>
+
+<body>
+
+  <!-- Name input modal -->
+  <div id="nameModal">
+    <div id="nameModalContent">
+      <h2>Enter Your Name</h2>
+      <input type="text" id="nameInput" placeholder="Your name here" autocomplete="off" />
+      <button id="nameSubmitBtn">Start</button>
+    </div>
+  </div>
+
+  <!-- Main game container -->
+  <div id="gameContainer">
+    <h2>Select Your Terea Badge</h2>
+    <div id="badges">
+      <div class="badge" data-badge-name="Terea Bronze" data-badge-desc="A classic and reliable choice." tabindex="0" role="button" aria-pressed="false">
+        <img src="iqos-192x192.png" alt="Terea Bronze" class="badge-img" />
+        <div class="caption">Terea Bronze</div>
+      </div>
+      <div class="badge" data-badge-name="Terea Sienna" data-badge-desc="Rich and earthy flavor." tabindex="0" role="button" aria-pressed="false">
+        <img src="iqos-192x192.png" alt="Terea Sienna" class="badge-img" />
+        <div class="caption">Terea Sienna</div>
+      </div>
+      <div class="badge" data-badge-name="Terea Apricity" data-badge-desc="Warm and vibrant experience." tabindex="0" role="button" aria-pressed="false">
+        <img src="iqos-192x192.png" alt="Terea Apricity" class="badge-img" />
+        <div class="caption">Terea Apricity</div>
+      </div>
+      <div class="badge" data-badge-name="Terea Azure" data-badge-desc="Cool and refreshing sensation." tabindex="0" role="button" aria-pressed="false">
+        <img src="iqos-192x192.png" alt="Terea Azure" class="badge-img" />
+        <div class="caption">Terea Azure</div>
+      </div>
+      <div class="badge" data-badge-name="Terea Ruby" data-badge-desc="Bold and passionate flavor." tabindex="0" role="button" aria-pressed="false">
+        <img src="iqos-192x192.png" alt="Terea Ruby" class="badge-img" />
+        <div class="caption">Terea Ruby</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const nameModal = document.getElementById('nameModal');
+      const gameContainer = document.getElementById('gameContainer');
+      const nameInput = document.getElementById('nameInput');
+      const nameSubmitBtn = document.getElementById('nameSubmitBtn');
+      const badges = document.querySelectorAll('.badge');
+
+      let playerName = '';
+      let selectedBadge = null;
+
+      function showNameModal() {
+        nameInput.value = '';
+        nameModal.style.display = 'flex';
+        gameContainer.style.display = 'none';
+        clearBadgeSelection();
+      }
+
+      function showGame() {
+        nameModal.style.display = 'none';
+        gameContainer.style.display = 'block';
+      }
+
+      function clearBadgeSelection() {
+        selectedBadge = null;
+        badges.forEach(badge => {
+          badge.classList.remove('selected');
+          badge.setAttribute('aria-pressed', 'false');
+        });
+      }
+
+      nameSubmitBtn.addEventListener('click', () => {
+        const name = nameInput.value.trim();
+        if (name === '') {
+          alert('Please enter your name.');
+          nameInput.focus();
+          return;
+        }
+        playerName = name;
+        showGame();
+      });
+
+      nameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          nameSubmitBtn.click();
+        }
+      });
+
+      badges.forEach(badge => {
+        badge.addEventListener('click', () => {
+          clearBadgeSelection();
+          badge.classList.add('selected');
+          badge.setAttribute('aria-pressed', 'true');
+          selectedBadge = badge.getAttribute('data-badge-name');
+          // Send data immediately on click
+          const badgeDesc = badge.getAttribute('data-badge-desc') || '';
+          fetch('/api/score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ player: playerName, score: selectedBadge, desc: badgeDesc })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              showNameModal();
+              // Removed redirect to scores.html
+            } else {
+              alert('Error sending your choice. Please try again.');
+            }
+          })
+          .catch(err => {
+            alert('Network error. Please try again.');
+          });
+        });
+        badge.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            badge.click();
+          }
+        });
+      });
+
+      showNameModal();
+    });
+  </script>
+</body>
+</html>

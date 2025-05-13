@@ -64,6 +64,11 @@
     #message.show {
       opacity: 1;
     }
+    
+    /* Hide arrow */
+    #arrow.hide {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -78,44 +83,45 @@
       const messageDiv = document.getElementById('message');
       const arrow = document.getElementById('arrow');
       let lastScoreId = null;
+      let firstLoad = true;
 
-      // Fetch latest score from backend
       async function fetchLatestScore() {
         try {
           const response = await fetch('/api/scores');
-          if (!response.ok) throw new Error('Network response was not ok');
+          if (!response.ok) return;
           const data = await response.json();
           if (data.success && data.scores.length > 0) {
             const latest = data.scores[0];
-            // Use timestamp + player + score as unique key
-            const currentId = latest.timestamp + latest.player + latest.score;
+            const currentId = latest.timestamp + latest.score + (latest.message || '');
+            if (firstLoad) {
+              lastScoreId = currentId;
+              firstLoad = false;
+              return;
+            }
             if (currentId !== lastScoreId) {
               lastScoreId = currentId;
-              showMessage(latest.player, latest.score);
+              showMessage(latest.message || `Awesome Choice!`, latest.score, latest.desc);
             }
           }
         } catch (err) {
-          console.error('Error fetching scores:', err);
+          // Silently ignore fetch errors
         }
       }
 
-      // Show animated message and toggle arrow visibility
-      function showMessage(player, badge) {
-        messageDiv.textContent = `Awesome Choice ${player}, You Like ${badge}.`;
+      function showMessage(message, badge, desc) {
+        messageDiv.innerHTML = `<b>${message}</b><br><span style='font-size:1.2rem;color:#555;'>${desc || ''}</span>`;
         messageDiv.classList.add('show');
-        arrow.style.display = 'none';  // Hide the floating icon when message shows
-
-        // Hide message after 5 seconds
+        arrow.classList.add('hide');
         setTimeout(() => {
           messageDiv.classList.remove('show');
-          arrow.style.display = 'block';  // Show the floating icon again
-        }, 5000);
+          setTimeout(() => {
+            messageDiv.innerHTML = '';
+            arrow.classList.remove('hide');
+          }, 800); // Wait for fade out before clearing and showing icon
+        }, 3000);
       }
 
-      // Initial fetch
       fetchLatestScore();
-
-      // Poll every 0.5 seconds (500 ms)
       setInterval(fetchLatestScore, 500);
     })();
   </script>

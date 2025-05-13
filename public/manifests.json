@@ -1,6 +1,6 @@
 {
-    "name": "Terea Badge Score",
-    "short_name": "TereaGameScore",
+    "name": "Terea Selections",
+    "short_name": "Terea Selections",
     "start_url": "/scores.html",
     "display": "standalone",
     "background_color": "#f0f0f5",
@@ -8,12 +8,12 @@
     "description": "A fun badge selection game",
     "icons": [
       {
-        "src": "/iqos-192x192.png",
+        "src": "/iqos logo 1.png",
         "sizes": "192x192",
         "type": "image/png"
       },
       {
-        "src": "/iqos-512x512.png",
+        "src": "/iqos logo 1.png",
         "sizes": "512x512",
         "type": "image/png"
       }

@@ -38,12 +38,30 @@
     </div>
   </div>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const badges = document.querySelectorAll('.badge');
       let selectedBadge = null;
+      let canClick = true;
+      const socket = io();
+
+      // Listen for unlock-badges event from server
+      socket.on('unlock-badges', () => {
+        canClick = true;
+        badges.forEach(badge => badge.classList.remove('disabled'));
+      });
+
+      // Disable badge clicks when message is showing
+      function lockBadges() {
+        canClick = false;
+        badges.forEach(badge => badge.classList.add('disabled'));
+      }
+
       badges.forEach(badge => {
         badge.addEventListener('click', () => {
+          if (!canClick) return;
+          lockBadges();
           badges.forEach(b => b.classList.remove('selected'));
           badge.classList.add('selected');
           badge.setAttribute('aria-pressed', 'true');
@@ -57,7 +75,7 @@
           });
         });
         badge.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if ((e.key === 'Enter' || e.key === ' ') && canClick) {
             e.preventDefault();
             badge.click();
           }
@@ -65,5 +83,12 @@
       });
     });
   </script>
+  <style>
+    .badge.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      filter: grayscale(1);
+    }
+  </style>
 </body>
 </html>

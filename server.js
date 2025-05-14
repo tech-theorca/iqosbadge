@@ -35,6 +35,13 @@ app.get('/api/scores', (req, res) => {
   res.json({ success: true, scores });
 });
 
+// Socket.io: listen for unlock-badges event from scores.html and broadcast to all clients
+io.on('connection', (socket) => {
+  socket.on('unlock-badges', () => {
+    io.emit('unlock-badges');
+  });
+});
+
 // Start server with socket.io
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`);

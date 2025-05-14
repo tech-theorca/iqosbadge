@@ -78,35 +78,13 @@
   
   <div id="message" role="alert" aria-live="polite"></div>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script>
     (function() {
       const messageDiv = document.getElementById('message');
       const arrow = document.getElementById('arrow');
       let lastScoreId = null;
       let firstLoad = true;
-
-      async function fetchLatestScore() {
-        try {
-          const response = await fetch('/api/scores');
-          if (!response.ok) return;
-          const data = await response.json();
-          if (data.success && data.scores.length > 0) {
-            const latest = data.scores[0];
-            const currentId = latest.timestamp + latest.score + (latest.message || '');
-            if (firstLoad) {
-              lastScoreId = currentId;
-              firstLoad = false;
-              return;
-            }
-            if (currentId !== lastScoreId) {
-              lastScoreId = currentId;
-              showMessage(latest.message || `Awesome Choice!`, latest.score, latest.desc);
-            }
-          }
-        } catch (err) {
-          // Silently ignore fetch errors
-        }
-      }
 
       function showMessage(message, badge, desc) {
         messageDiv.innerHTML = `<b>${message}</b><br><span style='font-size:3rem;color:#555;'>${desc || ''}</span>`;
@@ -117,12 +95,35 @@
           setTimeout(() => {
             messageDiv.innerHTML = '';
             arrow.classList.remove('hide');
-          }, 800); // Wait for fade out before clearing and showing icon
+            // Emit unlock-badges event to server
+            socket.emit('unlock-badges');
+          }, 800);
         }, 3000);
       }
 
+      // Connect to socket.io
+      const socket = io();
+      socket.on('new-score', (latest) => {
+        const currentId = latest.timestamp + latest.score + (latest.message || '');
+        if (currentId !== lastScoreId) {
+          lastScoreId = currentId;
+          showMessage(latest.message || `Awesome Choice!`, latest.score, latest.desc);
+        }
+      });
+
+      // On first load, fetch the latest score to initialize
+      async function fetchLatestScore() {
+        try {
+          const response = await fetch('/api/scores');
+          if (!response.ok) return;
+          const data = await response.json();
+          if (data.success && data.scores.length > 0) {
+            const latest = data.scores[0];
+            lastScoreId = latest.timestamp + latest.score + (latest.message || '');
+          }
+        } catch (err) {}
+      }
       fetchLatestScore();
-      setInterval(fetchLatestScore, 500);
     })();
   </script>
 </body>

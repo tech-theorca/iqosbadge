@@ -2,8 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const PORT = 80;
 
 app.use(cors());
@@ -20,7 +24,9 @@ app.post('/api/score', (req, res) => {
     return res.status(400).json({ success: false, message: 'Score is required.' });
   }
   const timestamp = new Date().toISOString();
-  scores.unshift({ player, score, desc, message, timestamp }); // Add to the beginning (newest first)
+  const newScore = { player, score, desc, message, timestamp };
+  scores.unshift(newScore); // Add to the beginning (newest first)
+  io.emit('new-score', newScore); // Emit to all connected clients
   res.json({ success: true });
 });
 
@@ -29,7 +35,7 @@ app.get('/api/scores', (req, res) => {
   res.json({ success: true, scores });
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
+// Start server with socket.io
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`);
 });

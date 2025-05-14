@@ -38,23 +38,30 @@
     </div>
   </div>
 
+  <div id="arrow" aria-hidden="true" style="display:none;">
+    <img src="/iqos logo 1.png" alt="IQOS Logo" id="arrowLogo" />
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const badges = document.querySelectorAll('.badge');
       let selectedBadge = null;
       let canClick = true;
+      const arrow = document.getElementById('arrow');
       const socket = io();
 
       // Listen for unlock-badges event from server
       socket.on('unlock-badges', () => {
         canClick = true;
+        arrow.style.display = 'none';
         badges.forEach(badge => badge.classList.remove('disabled'));
       });
 
       // Disable badge clicks when message is showing
       function lockBadges() {
         canClick = false;
+        arrow.style.display = '';
         badges.forEach(badge => badge.classList.add('disabled'));
       }
 
@@ -88,6 +95,33 @@
       opacity: 0.5;
       pointer-events: none;
       filter: grayscale(1);
+    }
+    #arrow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      background: none;
+      margin: 0;
+      pointer-events: none;
+      animation: floatUpDown 2.5s ease-in-out infinite;
+    }
+    #arrow img#arrowLogo {
+      width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    @keyframes floatUpDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
     }
   </style>
 </body>

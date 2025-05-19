@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <div id="arrow" aria-hidden="true" style="display:none;">
+  <div id="arrow" aria-hidden="true">
     <img src="/iqos logo 1.png" alt="IQOS Logo" id="arrowLogo" />
   </div>
 
@@ -54,14 +54,14 @@
       // Listen for unlock-badges event from server
       socket.on('unlock-badges', () => {
         canClick = true;
-        arrow.style.display = 'none';
+        arrow.classList.remove('showanim');
         badges.forEach(badge => badge.classList.remove('disabled'));
       });
 
       // Disable badge clicks when message is showing
       function lockBadges() {
         canClick = false;
-        arrow.style.display = '';
+        arrow.classList.add('showanim');
         badges.forEach(badge => badge.classList.add('disabled'));
       }
 
@@ -91,6 +91,13 @@
     });
   </script>
   <style>
+    
+    .showanim {
+      top: 0 !important;
+      /* animation: none !important; */
+      transition: all 0.3s 0.3s !important;
+      animation: floatUpDown 2.5s ease-in-out infinite;
+    }
     .badge.disabled {
       opacity: 0.5;
       pointer-events: none;
@@ -98,7 +105,7 @@
     }
     #arrow {
       position: fixed;
-      top: 0;
+      top: 100vh;
       left: 0;
       width: 100vw;
       height: 100vh;
@@ -109,6 +116,7 @@
       background: none;
       margin: 0;
       pointer-events: none;
+      transition: all 0.3s 0.3s !important;
       animation: floatUpDown 2.5s ease-in-out infinite;
     }
     #arrow img#arrowLogo {

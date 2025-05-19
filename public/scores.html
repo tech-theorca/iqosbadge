@@ -28,6 +28,9 @@
       animation: floatUpDown 2.5s ease-in-out infinite;
       margin-bottom: 40px;
       user-select: none;
+      position: absolute;
+      margin-top: 0px;
+      transition: all 0.3s 0.3s;
     }
 
     #arrow img#arrowLogo {
@@ -46,6 +49,23 @@
         transform: translateY(-20px);
       }
     }
+
+
+      @keyframes flyUp {
+    0% {
+      transform: translateY(100px);
+      opacity: 0;
+    }
+    50% {
+      transform: translateY(20px);
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
 
     /* Message container */
     #message {
@@ -67,7 +87,12 @@
     
     /* Hide arrow */
     #arrow.hide {
-      display: none;
+      /* display: none; */
+    }
+    .hideanim {
+      margin-top: -640px !important;
+      animation: none !important;
+      transition: all 0.3s !important;
     }
   </style>
 </head>
@@ -89,14 +114,17 @@
       function showMessage(message, badge, desc) {
         messageDiv.innerHTML = `<b>${message}</b><br><span style='font-size:3rem;color:#555;'>${desc || ''}</span>`;
         messageDiv.classList.add('show');
-        arrow.classList.add('hide');
+        arrow.classList.add('hideanim');
         setTimeout(() => {
           messageDiv.classList.remove('show');
           setTimeout(() => {
             messageDiv.innerHTML = '';
-            arrow.classList.remove('hide');
+            
+            setTimeout(() => {
+              arrow.classList.remove('hideanim');
+              socket.emit('unlock-badges');
+            }, 300);
             // Emit unlock-badges event to server
-            socket.emit('unlock-badges');
           }, 800);
         }, 3000);
       }

@@ -90,7 +90,7 @@
       /* display: none; */
     }
     .hideanim {
-      margin-top: -640px !important;
+      margin-top: -940px !important;
       animation: none !important;
       transition: all 0.3s !important;
     }
@@ -116,16 +116,16 @@
         messageDiv.classList.add('show');
         arrow.classList.add('hideanim');
         setTimeout(() => {
-          messageDiv.classList.remove('show');
           setTimeout(() => {
-            messageDiv.innerHTML = '';
             
             setTimeout(() => {
               arrow.classList.remove('hideanim');
               socket.emit('unlock-badges');
             }, 300);
+              messageDiv.innerHTML = '';
+              messageDiv.classList.remove('show');
             // Emit unlock-badges event to server
-          }, 800);
+          }, 1200);
         }, 3000);
       }
 
